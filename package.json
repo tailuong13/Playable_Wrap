@@ -1,0 +1,15 @@
+{
+  "name": "playable-wrapper",
+  "version": "1.0.0",
+  "description": "Wrap a Luna Playground unityads single-file export for AppLovin / Mintegral (port of wrap_playable.py)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "wrap": "node cli.js",
+    "test": "node test/parity.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Playable Wrapper</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="logo">▶</span>
+      <div>
+        <h1>Playable Wrapper</h1>
+        <p>Luna <code>unityads</code> export → AppLovin (.html) · Mintegral (.zip)</p>
+      </div>
+    </div>
+    <span class="badge" id="engineBadge">wrap_playable.py port</span>
+  </header>
+
+  <main class="layout">
+    <section class="col col-left">
+      <!-- 1. Input -->
+      <div class="card">
+        <h2><span class="step">1</span> File Luna export</h2>
+        <label class="drop" id="drop">
+          <input type="file" id="fileInput" accept=".html,.htm,text/html" hidden>
+          <div class="drop-inner">
+            <div class="drop-icon">⇪</div>
+            <div><strong>Kéo thả file .html</strong> hoặc bấm để chọn</div>
+            <div class="muted">Export single-file từ Luna Playground (target <code>unityads</code>)</div>
+          </div>
+        </label>
+        <div class="file-info hidden" id="fileInfo">
+          <div class="file-row">
+            <span class="file-name" id="fileName"></span>
+            <span class="muted" id="fileSize"></span>
+          </div>
+          <ul class="checks" id="detectList"></ul>
+        </div>
+      </div>
+
+      <!-- 2. Options -->
+      <div class="card">
+        <h2><span class="step">2</span> Cấu hình</h2>
+        <div class="field">
+          <label for="ios">iOS store link</label>
+          <input id="ios" type="url" placeholder="https://apps.apple.com/app/id..." spellcheck="false">
+          <small class="muted" id="iosHint">Để trống = dùng link đã bake trong build</small>
+        </div>
+        <div class="field">
+          <label for="android">Android store link</label>
+          <input id="android" type="url" placeholder="https://play.google.com/store/apps/details?id=..." spellcheck="false">
+          <small class="muted" id="androidHint">Để trống = dùng link đã bake trong build</small>
+        </div>
+
+        <div class="field">
+          <label>Networks</label>
+          <div class="toggles">
+            <label class="chip"><input type="checkbox" id="netApplovin" checked> AppLovin</label>
+            <label class="chip"><input type="checkbox" id="netMintegral" checked> Mintegral</label>
+          </div>
+        </div>
+
+        <details class="adv">
+          <summary>Nâng cao</summary>
+          <div class="field">
+            <label for="startMs">Mintegral auto-start (ms)</label>
+            <input id="startMs" type="number" min="0" step="100" value="0">
+            <small class="muted">0 = chờ SDK gọi <code>gameStart()</code> (giống export chính thức của Luna)</small>
+          </div>
+          <label class="check"><input type="checkbox" id="keepDebugError">
+            Giữ <code>console.warn(new Error)</code> devtools-probe của Luna <span class="muted">(review tool sẽ flag)</span></label>
+          <label class="check"><input type="checkbox" id="keepRemoteDebug">
+            Giữ block remote-debug override console <span class="muted">(review tool sẽ flag)</span></label>
+        </details>
+
+        <button class="btn primary" id="wrapBtn" disabled>Wrap playable</button>
+      </div>
+
+      <!-- 3. Output -->
+      <div class="card">
+        <h2><span class="step">3</span> Kết quả</h2>
+        <div id="log" class="log empty">Chưa có output.</div>
+        <div id="outputs" class="outputs"></div>
+      </div>
+    </section>
+
+    <!-- Preview -->
+    <section class="col col-right">
+      <div class="card preview-card">
+        <div class="preview-head">
+          <h2>Preview</h2>
+          <div class="preview-controls">
+            <select id="deviceSelect" aria-label="Thiết bị">
+              <option value="390x844">iPhone 14 · 390×844</option>
+              <option value="375x667">iPhone SE · 375×667</option>
+              <option value="412x915">Pixel 7 · 412×915</option>
+              <option value="384x650">Compact · 384×650</option>
+              <option value="820x1180">iPad Air · 820×1180</option>
+            </select>
+            <button class="btn ghost" id="rotateBtn" title="Xoay ngang/dọc">⟳ Xoay</button>
+            <button class="btn ghost" id="reloadBtn" title="Tải lại preview" disabled>↻</button>
+          </div>
+        </div>
+
+        <div class="sdk-bar hidden" id="sdkBar">
+          <span class="muted" id="sdkLabel">Mintegral SDK mock</span>
+          <button class="btn small" id="sdkStart">gameStart()</button>
+          <button class="btn small ghost" id="sdkClose">gameClose()</button>
+        </div>
+
+        <div class="stage" id="stage">
+          <div class="device" id="device">
+            <iframe id="frame" title="Playable preview" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+            <div class="device-empty" id="deviceEmpty">Wrap xong bấm <strong>Preview</strong> ở output để chạy thử</div>
+          </div>
+        </div>
+
+        <div class="events">
+          <div class="events-head">
+            <h3>Events</h3>
+            <button class="btn small ghost" id="clearEvents">Clear</button>
+          </div>
+          <ol id="events" class="event-list"></ol>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
